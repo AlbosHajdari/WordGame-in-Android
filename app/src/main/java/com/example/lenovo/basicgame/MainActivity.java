@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
     private void addWords() {
         wordsArray.add("pewdiepie"); //subscribe to pewdipie
         wordsArray.add("t-series"); //unsubscribe from t-series
-        wordsArray.add("youtube");  //breawstore platform
+        wordsArray.add("youtube");  //best/worst platform?
         wordsArray.add("yaaah");    //cringe nr1.0
         wordsArray.add("it's");     //cringe nr1.1
         wordsArray.add("rewind");   //cringe nr1.2
