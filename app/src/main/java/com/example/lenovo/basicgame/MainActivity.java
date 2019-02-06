@@ -1,15 +1,12 @@
 package com.example.lenovo.basicgame;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.opengl.Visibility;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -54,29 +51,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         addWords();
-
-        wordTextView = findViewById(R.id.word_textView);
-        wordEditText = findViewById(R.id.word_editText);
-        scoreTextView = findViewById(R.id.score_textView);
-        playTextView = findViewById(R.id.play_TextView);
-        playHolder = findViewById(R.id.play_Holder);
-        gameOverHolder = findViewById(R.id.game_over_Holer);
-        gameOverTextView = findViewById(R.id.game_over_TextView);
-        scoreGameOverTextView = findViewById(R.id.score_game_over_TextView);
-        highScoreGameOverTextView = findViewById(R.id.high_score_game_over_TextView);
-        timeTextView = findViewById(R.id.time_textView);
-
+        findViews();
 
         playHolder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                secondsPassed = 0;
-                if (!scheduledTimer) {
-                    myTimer.schedule(task, 0, 1000);
-                    scheduledTimer = true;
-                }
+                resetTimer();
+                startTimer();
                 playHolder.setVisibility(View.GONE);
-                score = 0;
+                score = 0; //reset score
                 scoreTextView.setText("Score = " + formatedDouble(score));
                 getWord();
             }
@@ -100,27 +83,22 @@ public class MainActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (getUserInput().length() == getCurrentWord().length()) {
                     if (getUserInput().equalsIgnoreCase(getCurrentWord())) {
-
-                        score = score + (double) getCurrentWord().length() / secondsPassed;
-                        secondsPassed = 0;
+                        score = updatedScore();
+                        resetTimer();
                         scoreTextView.setText("Score = " + formatedDouble(score));
                         getWord();
-
                     } else {
-                        InputMethodManager imm = (InputMethodManager) getSystemService(MainActivity.INPUT_METHOD_SERVICE);
-                        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                        hideKeyBoard();
 
                         gameOverHolder.setVisibility(View.VISIBLE);
-
                         scoreGameOverTextView.setText("Score = " + formatedDouble(score));
+
                         if (score > highScore) {
-                            highScore = score;
-                            preferences.edit().putString(HIGH_SCORE, String.valueOf(highScore)).apply();
+                            updateHighScore();
                             highScoreGameOverTextView.setText("New highscore = " + formatedDouble(highScore));
                         } else{
                             highScoreGameOverTextView.setText("Highscore = " + formatedDouble(highScore));
                         }
-
                     }
                 }
             }
@@ -131,6 +109,45 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void findViews() {
+        wordTextView = findViewById(R.id.word_textView);
+        wordEditText = findViewById(R.id.word_editText);
+        scoreTextView = findViewById(R.id.score_textView);
+        playTextView = findViewById(R.id.play_TextView);
+        playHolder = findViewById(R.id.play_Holder);
+        gameOverHolder = findViewById(R.id.game_over_Holer);
+        gameOverTextView = findViewById(R.id.game_over_TextView);
+        scoreGameOverTextView = findViewById(R.id.score_game_over_TextView);
+        highScoreGameOverTextView = findViewById(R.id.high_score_game_over_TextView);
+        timeTextView = findViewById(R.id.time_textView);
+    }
+
+    private void updateHighScore() {
+        highScore = score;
+        preferences.edit().putString(HIGH_SCORE, String.valueOf(highScore)).apply();
+    }
+
+    private double updatedScore() {
+        return score + (double) getCurrentWord().length() / secondsPassed;
+    }
+
+    private void hideKeyBoard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(MainActivity.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+    }
+
+    private void resetTimer() {
+        secondsPassed = 0;
+    }
+
+    private void startTimer() {
+        if (!scheduledTimer) {
+            myTimer.schedule(task, 0, 1000);
+            scheduledTimer = true;
+        }
+    }
+
     private String formatedDouble(double number){
         return String.format("%.2f", number);
     }
@@ -172,11 +189,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addWords() {
-        wordsArray.add("one");
-        wordsArray.add("two");
-        wordsArray.add("three");
-        wordsArray.add("four");
-        wordsArray.add("eleven");
-        wordsArray.add("twelve");
+        wordsArray.add("pewdiepie"); //subscribe to pewdipie
+        wordsArray.add("t-series"); //unsubscribe from t-series
+        wordsArray.add("youtube");  //breawstore platform
+        wordsArray.add("yaaah");    //cringe nr1.0
+        wordsArray.add("it's");     //cringe nr1.1
+        wordsArray.add("rewind");   //cringe nr1.2
+        wordsArray.add("time");    //cringe nr1.3
+        wordsArray.add("EEEEEEEEEEEEEEEEEE macarena");
+        wordsArray.add("It would be a shame if something happened to your score.");
     }
 }
